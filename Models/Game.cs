@@ -93,8 +93,13 @@ namespace BowlingGame
 
             frame.HandleThrow(throwType, userInput);
 
-            if ((throwType == ThrowType.Second && !(IsFinalFrame && (frame.IsSpare || frame.IsStrike)))
-                || throwType == ThrowType.Third)
+            if (
+                    frame.IsStrike
+                ||
+                    (throwType == ThrowType.Second && !(IsFinalFrame && (frame.IsSpare || frame.IsStrike)))
+                ||
+                    throwType == ThrowType.Third
+                )
             {
                 ComputeScore(frame);
             }
