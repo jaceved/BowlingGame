@@ -93,11 +93,80 @@ namespace BowlingGame
 
             frame.HandleThrow(throwType, userInput);
 
-            if ((throwType == ThrowType.Second && !(IsFinalFrame && (frame.IsSpare || frame.IsStrike)))
-                || throwType == ThrowType.Third)
+            if (
+                    frame.IsStrike
+                ||
+                    (throwType == ThrowType.Second && !(IsFinalFrame && (frame.IsSpare || frame.IsStrike)))
+                || 
+                    throwType == ThrowType.Third
+                )
             {
-                ComputeScore(frame);
+                frame.IsCompleted = true;
+
+                UpdateAllFrameScores();
+
+                UserScore = Frames.Sum(f => f.FrameScored);
+
+                Console.WriteLine($"Current Score: {UserScore}");
+                // ComputeScore(frame);
+
             }
+
+
+        }
+
+        public int GetNextFirstThrow(int Index)
+        {
+
+            var nextFrame = GetFrame(Index + 1);
+
+            if (nextFrame.IsCompleted)
+                return nextFrame.FirstThrow;
+
+            return 0;
+        }
+
+        public int GetNextTwoThrows(int Index)
+        {
+
+            var nextFrame = GetFrame(Index + 1);
+
+            if (!nextFrame.IsStrike && nextFrame.IsCompleted)
+                return nextFrame.FirstThrow + nextFrame.SecondThrow;
+            else // if(nextFrame.IsStrike)
+            {
+                var secondNextFrame = GetFrame(Index + 2);
+
+                if (secondNextFrame.IsCompleted)
+                    return nextFrame.FirstThrow + secondNextFrame.FirstThrow;
+                else 
+                    return 0;
+            }
+
+        }
+
+        public void UpdateAllFrameScores()
+        {
+            Frames.ForEach(frame =>
+            {
+
+                if (!frame.IsSpare && !frame.IsStrike)
+                {
+                    frame.FrameScored = frame.FirstThrow + frame.SecondThrow;
+                }
+                else if (frame.IsSpare)
+                {
+                    frame.FrameScored  = 10 + GetNextFirstThrow(frame.Index);
+                }
+                else if (frame.IsStrike)
+                {
+                    frame.FrameScored = 10 + GetNextTwoThrows(frame.Index);
+                }
+                else
+                {
+                    frame.FrameScored = 0;
+                }
+            });
 
         }
 
