@@ -101,6 +101,7 @@ namespace BowlingGame
                     throwType == ThrowType.Third
                 )
             {
+
                 frame.IsCompleted = true;
 
                 UpdateAllFrameScores();
@@ -130,18 +131,24 @@ namespace BowlingGame
         {
 
             var nextFrame = GetFrame(Index + 1);
-
-            if (!nextFrame.IsStrike && nextFrame.IsCompleted)
-                return nextFrame.FirstThrow + nextFrame.SecondThrow;
-            else // if(nextFrame.IsStrike)
+            if (nextFrame != null)
             {
-                var secondNextFrame = GetFrame(Index + 2);
-
-                if (secondNextFrame.IsCompleted)
-                    return nextFrame.FirstThrow + secondNextFrame.FirstThrow;
-                else 
-                    return 0;
+                if (!nextFrame.IsStrike && nextFrame.IsCompleted)
+                    return nextFrame.FirstThrow + nextFrame.SecondThrow;
+                else // if(nextFrame.IsStrike)
+                {
+                    var secondNextFrame = GetFrame(Index + 2);
+                    if (secondNextFrame != null)
+                    {
+                        if (secondNextFrame.IsCompleted)
+                            return nextFrame.FirstThrow + secondNextFrame.FirstThrow;
+                        else
+                            return 0;
+                    }
+                    else return 0;
+                }
             }
+            else return 0;
 
         }
 
@@ -150,22 +157,62 @@ namespace BowlingGame
             Frames.ForEach(frame =>
             {
 
-                if (!frame.IsSpare && !frame.IsStrike)
+                if (frame.Index == MaxFrames)
                 {
-                    frame.FrameScored = frame.FirstThrow + frame.SecondThrow;
-                }
-                else if (frame.IsSpare)
-                {
-                    frame.FrameScored  = 10 + GetNextFirstThrow(frame.Index);
-                }
-                else if (frame.IsStrike)
-                {
-                    frame.FrameScored = 10 + GetNextTwoThrows(frame.Index);
+                    frame.FrameScored = frame.FirstThrow + frame.SecondThrow + frame.ThirdThrow;
+
+                    if(frame.IsStrike && frame.SecondThrow == 10 && frame.ThirdThrow == 10)
+                    {
+                        //handle the perfect game scenario? there has to be a better way...
+                        frame.FrameScored = (frame.FirstThrow + frame.SecondThrow + frame.ThirdThrow) * 2;
+                    }
+                    //if (frame.IsStrike && frame.IsCompleted)
+                    //{
+                    //    if(frame.SecondThrow == 10)
+                    //    {
+                    //        frame.FrameScored += (frame.FirstThrow * 2) + (frame.SecondThrow * 2);
+
+                    //    }
+                    //    else
+                    //    {
+                    //        frame.FrameScored += (frame.FirstThrow * 2) + frame.SecondThrow;
+                    //    }
+
+                    //    if(frame.ThirdThrow == 10)
+                    //    {
+                    //        frame.FrameScored += (frame.ThirdThrow * 2);
+                    //    }
+
+                    //}
+                    //else
+                    //{
+
+                    //}
+
                 }
                 else
                 {
-                    frame.FrameScored = 0;
+                    if (!frame.IsSpare && !frame.IsStrike)
+                    {
+                        frame.FrameScored = frame.FirstThrow + frame.SecondThrow;
+                    }
+                    else if (frame.IsSpare)
+                    {
+                        frame.FrameScored = 10 + GetNextFirstThrow(frame.Index);
+                    }
+                    else if (frame.IsStrike)
+                    {
+                        if (GetNextTwoThrows(frame.Index) != 0)
+                            frame.FrameScored = 10 + GetNextTwoThrows(frame.Index);
+
+                    }
+                    else
+                    {
+                        frame.FrameScored = 0;
+                    }
+
                 }
+         
             });
 
         }
