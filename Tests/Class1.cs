@@ -68,5 +68,66 @@ namespace Tests
 
             game.UserScore.ShouldBe(110);
         }
+
+        [Fact]
+        public void Game_ShouldBePerfect_300()
+        {
+            Game game = new Game();
+
+            //Frame 1 
+            ++game.CurrentFrameIndex;
+            game.Throw(ThrowType.First, 10);
+            game.Throw(ThrowType.Second, 10);
+
+
+            //Frame 2
+            ++game.CurrentFrameIndex;
+            game.Throw(ThrowType.First, 10);
+            game.Throw(ThrowType.Second, 10);
+
+            //Frame 3 
+            ++game.CurrentFrameIndex;
+            game.Throw(ThrowType.First, 10);
+            game.Throw(ThrowType.Second, 10);
+
+            //Frame 4
+            ++game.CurrentFrameIndex;
+            game.Throw(ThrowType.First, 10);
+            game.Throw(ThrowType.Second, 10);
+
+            //Frame 5
+            ++game.CurrentFrameIndex;
+            game.Throw(ThrowType.First, 10);
+            game.Throw(ThrowType.Second, 10);
+
+            //Frame 6
+            ++game.CurrentFrameIndex;
+            game.Throw(ThrowType.First, 10);
+            game.Throw(ThrowType.Second, 10);
+
+            //Frame 7
+            ++game.CurrentFrameIndex;
+            game.Throw(ThrowType.First, 10);
+            game.Throw(ThrowType.Second, 10);
+
+            //Frame 8
+            ++game.CurrentFrameIndex;
+            game.Throw(ThrowType.First, 10);
+            game.Throw(ThrowType.Second, 10);
+
+            //Frame 9
+            ++game.CurrentFrameIndex;
+            game.Throw(ThrowType.First, 10);
+            game.Throw(ThrowType.Second, 10);
+
+            //Frame 10
+            ++game.CurrentFrameIndex;
+            game.Throw(ThrowType.First, 10);
+            game.Throw(ThrowType.Second, 10);
+            game.Throw(ThrowType.Third, 10);
+
+
+            game.UserScore.ShouldBe(300);
+        }
     }
 }

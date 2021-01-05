@@ -15,6 +15,8 @@ namespace Models
         public int SecondThrow { get; set; } = 0;
         public int ThirdThrow { get; set; } = 0;
 
+        public bool IsCompleted { get; set; } = false;
+
         public bool IsStrike
         {
             get

@@ -97,12 +97,123 @@ namespace BowlingGame
                     frame.IsStrike
                 ||
                     (throwType == ThrowType.Second && !(IsFinalFrame && (frame.IsSpare || frame.IsStrike)))
-                ||
+                || 
                     throwType == ThrowType.Third
                 )
             {
-                ComputeScore(frame);
+
+                frame.IsCompleted = true;
+
+                UpdateAllFrameScores();
+
+                UserScore = Frames.Sum(f => f.FrameScored);
+
+                Console.WriteLine($"Current Score: {UserScore}");
+                // ComputeScore(frame);
+
             }
+
+
+        }
+
+        public int GetNextFirstThrow(int Index)
+        {
+
+            var nextFrame = GetFrame(Index + 1);
+
+            if (nextFrame.IsCompleted)
+                return nextFrame.FirstThrow;
+
+            return 0;
+        }
+
+        public int GetNextTwoThrows(int Index)
+        {
+
+            var nextFrame = GetFrame(Index + 1);
+            if (nextFrame != null)
+            {
+                if (!nextFrame.IsStrike && nextFrame.IsCompleted)
+                    return nextFrame.FirstThrow + nextFrame.SecondThrow;
+                else // if(nextFrame.IsStrike)
+                {
+                    var secondNextFrame = GetFrame(Index + 2);
+                    if (secondNextFrame != null)
+                    {
+                        if (secondNextFrame.IsCompleted)
+                            return nextFrame.FirstThrow + secondNextFrame.FirstThrow;
+                        else
+                            return 0;
+                    }
+                    else return 0;
+                }
+            }
+            else return 0;
+
+        }
+
+        public void UpdateAllFrameScores()
+        {
+            Frames.ForEach(frame =>
+            {
+
+                if (frame.Index == MaxFrames)
+                {
+                    frame.FrameScored = frame.FirstThrow + frame.SecondThrow + frame.ThirdThrow;
+
+                    if(frame.IsStrike && frame.SecondThrow == 10 && frame.ThirdThrow == 10)
+                    {
+                        //handle the perfect game scenario? there has to be a better way...
+                        frame.FrameScored = (frame.FirstThrow + frame.SecondThrow + frame.ThirdThrow) * 2;
+                    }
+                    //if (frame.IsStrike && frame.IsCompleted)
+                    //{
+                    //    if(frame.SecondThrow == 10)
+                    //    {
+                    //        frame.FrameScored += (frame.FirstThrow * 2) + (frame.SecondThrow * 2);
+
+                    //    }
+                    //    else
+                    //    {
+                    //        frame.FrameScored += (frame.FirstThrow * 2) + frame.SecondThrow;
+                    //    }
+
+                    //    if(frame.ThirdThrow == 10)
+                    //    {
+                    //        frame.FrameScored += (frame.ThirdThrow * 2);
+                    //    }
+
+                    //}
+                    //else
+                    //{
+
+                    //}
+
+                }
+                else
+                {
+                    if (!frame.IsSpare && !frame.IsStrike)
+                    {
+                        frame.FrameScored = frame.FirstThrow + frame.SecondThrow;
+                    }
+                    else if (frame.IsSpare)
+                    {
+                        frame.FrameScored = 10 + GetNextFirstThrow(frame.Index);
+                    }
+                    else if (frame.IsStrike)
+                    {
+                        if (GetNextTwoThrows(frame.Index) != 0)
+                            frame.FrameScored = 10 + GetNextTwoThrows(frame.Index);
+
+                    }
+                    else
+                    {
+                        frame.FrameScored = 0;
+                    }
+
+                }
+         
+            });
 
         }
 
